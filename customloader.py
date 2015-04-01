@@ -2,32 +2,17 @@
 # __author__ = 'aburak'
 
 import django
-from ct.mymodels import *
+from src.models import *
 from random import randint
 
 
 class Customloader():
 
-
-    def createLesson(self, unit):
-            title = "Explanation of Relative Clauses"
-            text = "Use relative clauses to give information about a noun"
-            unit.create_lesson(title=title, text=text)
-
-    def addCourse(self, title, description, addedBy):
-        course = Course(title=title, description=description, addedBy=addedBy)
-        course.save();
-        unit = course.create_unit(title='Relative Clauses', author=addedBy)
-        self.createLesson(unit=unit)
-
     def run(self):
         self.initialLessonsAndStudents()
         self.createTreatments()
         self.createTests()
-        title = "English"
-        description = "English grammar"
-        admin = User.objects.get(pk=257)
-        self.addCourse(title=title, description=description, addedBy=admin)
+        self.createTreatmentStudent()
 
     def initialLessonsAndStudents(self):
         for i in range(10):
@@ -39,10 +24,10 @@ class Customloader():
             student.save()
 
     def createTreatments(self):
-        lessons = Lesson.objects
+        lessons = Lesson.objects.all()
 
         for i in range(50):
-            treatment = Treatment(lesson1=lessons.get(i%10), lesson2=lessons.get((i+1)%10), lesson3=lessons.get((i+2)%10))
+            treatment = Treatment(lesson1=lessons[(i%10)], lesson2=lessons[((i+1)%10)], lesson3=lessons[((i+2)%10)])
             treatment.save()
 
     def createTests(self):
@@ -51,6 +36,10 @@ class Customloader():
         preLesson2 = Lesson(title='Pre Question 2', text="Question text", choice1="A", choice2="B", choice3="C", choice4="D", answer=1, kind_choice=Lesson.QUESTION)
         preLesson3 = Lesson(title='Pre Question 3', text="Question text", choice1="A", choice2="B", choice3="C", choice4="D", answer=1, kind_choice=Lesson.QUESTION)
 
+        preLesson1.save()
+        preLesson2.save()
+        preLesson3.save()
+
         preTest = Test(kind=Test.PRE, lesson1=preLesson1, lesson2=preLesson2, lesson3=preLesson3)
         preTest.save()
 
@@ -58,17 +47,20 @@ class Customloader():
         postLesson2 = Lesson(title='Post Question 2', text="Question text", choice1="A", choice2="B", choice3="C", choice4="D", answer=1, kind_choice=Lesson.QUESTION)
         postLesson3 = Lesson(title='Post Question 3', text="Question text", choice1="A", choice2="B", choice3="C", choice4="D", answer=1, kind_choice=Lesson.QUESTION)
 
+        postLesson1.save()
+        postLesson2.save()
+        postLesson3.save()
 
         postTest = Test(kind=Test.POST, lesson1=postLesson1, lesson2=postLesson2, lesson3=postLesson3)
         postTest.save()
 
     def createTreatmentStudent(self):
-        treatments = Treatment.objects
-        students = Student.objects
+        treatments = Treatment.objects.all()
+        students = Student.objects.all()
         for i in range(10):
-            currentStudent = students.get(i)
+            currentStudent = students[i]
             for j in range(50):
-                currentTreatment = treatments.get(j)
+                currentTreatment = treatments[j]
                 preScore = randint(0, 3)
                 treatmentStudent = TreatmentStudent(treatment=currentTreatment, student=currentStudent, pre_test_score=preScore, post_test_score=randint(preScore, 3))
                 treatmentStudent.save()
