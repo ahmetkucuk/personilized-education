@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+local_path = lambda path: os.path.join(os.path.dirname(__file__), path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +28,27 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
 # Application definition
+
+STATIC_ROOT = os.environ.get('STATIC_ROOT', local_path('static/'))
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = os.environ.get('STATIC_URL', '/static/')
+
+# Additional locations of static files
+STATICFILES_DIRS = []
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -37,6 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'src',
+    'crispy_forms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,6 +85,11 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [os.path.join(BASE_DIR, 'templates')],
+}]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
