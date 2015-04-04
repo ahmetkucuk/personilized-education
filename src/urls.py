@@ -4,4 +4,5 @@ from src import views
 urlpatterns = patterns( '',
 	url( r'^$', views.MainPage, name = 'main'),
 	url( r'crispy', views.CrispyView, name = 'crispy'),
+	url( r'context', views.ContextView, name = 'context'),
 )

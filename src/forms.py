@@ -3,7 +3,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field
 from models import *
 
-'''
 
 class ContextForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -14,9 +13,8 @@ class ContextForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Save'))
     class Meta:
         model = Context
-        fields = ['text', 'confidence']
-        labels = dict(text=_('Your answer'))
-'''
+        fields = ['age', 'english_level', 'native_language']
+
 
 class SampleForm(forms.Form):
     item = forms.CharField()
