@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponse
 from django.views.generic import FormView
+from random import randint
 from src.forms import *
 
 
@@ -30,19 +31,35 @@ def ContextView(request):
     student.save()
     request.session['session_id'] = "23434"
     request.session['student_id'] = student.id
-    request.session['treatment_id'] = 1 # choose random treatment, or ML
+    treatments = Treatment.objects.all()
+    treatment = treatments[randint(1, treatments.count())]
+    request.session['treatment_id'] = treatment.id # choose random treatment, or ML
     template_name='crispy.html'
     form_class = ContextForm()
     return render(request, template_name, {'form': form_class})
 
-def LessonView(request, lesson_number):
+def LessonView(request, treatment_id, lesson_order):
     if request.method == 'POST':
-        if int(lesson_number) == 3:
+        given_answer = request.POST['answer']
+        student_id = request.session['student_id']
+        student = Student.objects.get(pk=student_id)
+        print(student_id)
+        print(lesson_order)
+        print(treatment_id)
+        treatment = Treatment.objects.get(pk=treatment_id)
+        lesson = getLesson(treatment, lesson_order)
+        #lesson_student = LessonStudent(student=student, treatment=treatment, lesson=lesson, given_answer=int(given_answer))
+        #lesson_student.save()
+        if int(lesson_order) == 3:
             return redirect('/postTest')
-        return redirect('/lesson/' + str(int(lesson_number) + 1))
+        return redirect('/treatment/' + str(treatment_id) + '/lesson/' + str(int(lesson_order) + 1))
     template_name='lesson.html'
-    form_class = LessonForm()
-    return render(request, template_name, {'form': form_class})
+    treatment_id = request.session['treatment_id']
+
+    treatment = Treatment.objects.get(pk=treatment_id)
+    lesson = getLesson(treatment, int(lesson_order))
+    form_class = LessonForm(lesson)
+    return render(request, template_name, {'question_text': lesson.text, 'form': form_class})
 
 def PostTestView(request):
     if request.method == 'POST':
@@ -53,8 +70,16 @@ def PostTestView(request):
 
 def PreTestView(request):
     if request.method == 'POST':
-        return redirect('/lesson/1')
+        return redirect('/treatment/' + str(request.session['treatment_id']) + '/lesson/1')
     template_name='test.html'
     form_class = TestForm()
     return render(request, template_name, {'form': form_class})
 
+def getLesson(treatment, lesson_order):
+    if lesson_order == 1:
+        return treatment.lesson1
+    if lesson_order == 2:
+        return treatment.lesson2
+    if lesson_order == 3:
+        return treatment.lesson3
+    return treatment.lesson1

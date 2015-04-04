@@ -21,17 +21,20 @@ class SampleForm(forms.Form):
     item = forms.CharField()
 
 class LessonForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, lesson, *args, **kwargs):
         super(LessonForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_id = 'id-responseForm'
         self.helper.form_class = 'form-vertical'
         self.helper.add_input(Submit('submit', 'Save'))
-    answer=forms.ChoiceField(
-        widget=forms.RadioSelect,
-        label="Question text ",
-        choices=(('A','lowest '),('B','highest'),('C','Son '),),
-        )
+        self.fields['answer'] = forms.ChoiceField(
+            widget=forms.RadioSelect,
+            label="Question text ",
+            choices=(('1',lesson.choice1),('2',lesson.choice2),('3',lesson.choice3),),
+            )
+
+    answer=forms.ChoiceField()
+
 
 
 class TestForm(forms.Form):

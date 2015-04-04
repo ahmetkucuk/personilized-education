@@ -80,5 +80,5 @@ class TreatmentStudent(models.Model):
 class LessonStudent(models.Model):
     student = models.ForeignKey('Student', related_name="lesson_student", null=True)
     lesson = models.ForeignKey('Lesson', related_name="lesson", null=True)
-    treatment_id = models.IntegerField(null=False)
+    treatment = models.ForeignKey('Treatment', related_name="lesson_student_treatment", null=True)
     given_answer = models.IntegerField(null=False)

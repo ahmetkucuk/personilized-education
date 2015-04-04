@@ -7,5 +7,5 @@ urlpatterns = patterns( '',
 	url( r'context', views.ContextView, name = 'context'),
 	url( r'postTest', views.PostTestView, name = 'postTest'),
 	url( r'preTest', views.PreTestView, name = 'preTest'),
-	url( r'lesson/(?P<lesson_number>\d+)', views.LessonView, name = 'lesson'),
+	url( r'treatment/(?P<treatment_id>\d+)/lesson/(?P<lesson_order>\d+)', views.LessonView, name = 'lesson'),
 )
