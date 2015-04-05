@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponse
 from django.views.generic import FormView
 from random import randint
+from Utils import getLabel
 from src.forms import *
 
 
@@ -22,8 +23,12 @@ def ContextView(request):
         #this initialization is done for passing required fields to ContextForm
         context = Context(user=student)
         form = ContextForm(request.POST, instance=context)
+
         if form.is_valid():
-            form.save()
+            context = form.save()
+            l = getLabel(context)
+            student.label = Label.objects.get(label=l)
+            student.save()
             print("form saved " + request.session['session_id'])
             return redirect('/preTest')
 
@@ -31,8 +36,9 @@ def ContextView(request):
     student.save()
     request.session['session_id'] = "23434"
     request.session['student_id'] = student.id
-    treatments = Treatment.objects.all()
-    treatment = treatments[randint(1, treatments.count())]
+    #treatments = Treatment.objects.all()
+    #treatment = treatments[randint(1, treatments.count())]
+    treatment = Treatment.objects.get(pk=1)
     request.session['treatment_id'] = treatment.id # choose random treatment, or ML
     template_name='crispy.html'
     form_class = ContextForm()
@@ -43,13 +49,10 @@ def LessonView(request, treatment_id, lesson_order):
         given_answer = request.POST['answer']
         student_id = request.session['student_id']
         student = Student.objects.get(pk=student_id)
-        print(student_id)
-        print(lesson_order)
-        print(treatment_id)
         treatment = Treatment.objects.get(pk=treatment_id)
-        lesson = getLesson(treatment, lesson_order)
-        #lesson_student = LessonStudent(student=student, treatment=treatment, lesson=lesson, given_answer=int(given_answer))
-        #lesson_student.save()
+        lesson = getLesson(treatment, int(lesson_order))
+        lesson_student = LessonStudent(student=student, treatment=treatment, lesson=lesson, given_answer=int(given_answer))
+        lesson_student.save()
         if int(lesson_order) == 3:
             return redirect('/postTest')
         return redirect('/treatment/' + str(treatment_id) + '/lesson/' + str(int(lesson_order) + 1))
@@ -83,3 +86,4 @@ def getLesson(treatment, lesson_order):
     if lesson_order == 3:
         return treatment.lesson3
     return treatment.lesson1
+
