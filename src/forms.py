@@ -40,7 +40,7 @@ class LessonForm(forms.Form):
 
 
 class TestForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, test, *args, **kwargs):
         super(TestForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_id = 'id-responseForm'
@@ -48,20 +48,19 @@ class TestForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Save'))
         self.fields['answer1'] = forms.ChoiceField(
             widget=forms.RadioSelect,
-            label="Question text ",
-            choices=(('1',"A"),('2',"B"),('3',"C"),),
+            label="1.  " + test.lesson1.text,
+            choices=(('1', test.lesson1.choice1),('2',test.lesson1.choice2),('3',test.lesson1.choice3),),
             )
         self.fields['answer2'] = forms.ChoiceField(
             widget=forms.RadioSelect,
-            label="Question text ",
-            choices=(('1',"A"),('2',"B"),('3',"C"),),
+            label="2.  " + test.lesson2.text,
+            choices=(('1',test.lesson1.choice1),('2',test.lesson1.choice2),('3',test.lesson1.choice3),),
             )
         self.fields['answer3'] = forms.ChoiceField(
             widget=forms.RadioSelect,
-            label="Question text ",
-            choices=(('1',"A"),('2',"B"),('3',"C"),),
+            label="3.  " + test.lesson3.text,
+            choices=(('1',test.lesson1.choice1),('2',test.lesson1.choice2),('3',test.lesson1.choice3),),
             )
-
     answer1=forms.ChoiceField()
     answer2=forms.ChoiceField()
     answer3=forms.ChoiceField()

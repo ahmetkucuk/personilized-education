@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count, Max
 import glob
+from random import randint
 import json
 
 
@@ -67,6 +68,8 @@ class Label(models.Model):
     label = models.IntegerField(null=False)
 
 class TreatmentLabel(models.Model):
+    treatment = models.ForeignKey('Treatment', related_name="treatment_label_id", null=False)
+    label = models.ForeignKey('Label', related_name="label_treatment_id", null=False)
     number_of_occurance = models.IntegerField(null=False)
     pre_test_total = models.IntegerField(null=False)
     post_test_total = models.IntegerField(null=False)

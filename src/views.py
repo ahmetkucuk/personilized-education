@@ -2,11 +2,12 @@ from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponse
 from django.views.generic import FormView
 from random import randint
-from Utils import getLabel
+from Utils import getLabel, makeclustering, getTreatment
 from src.forms import *
 
 
 def MainPage(request):
+    makeclustering()
     return render_to_response(template_name='home.html')
 
 
@@ -23,7 +24,7 @@ def ContextView(request):
         #this initialization is done for passing required fields to ContextForm
         context = Context(user=student)
         form = ContextForm(request.POST, instance=context)
-
+        print(getTreatment(context))
         if form.is_valid():
             context = form.save()
             l = getLabel(context)
@@ -32,7 +33,9 @@ def ContextView(request):
             print("form saved " + request.session['session_id'])
             return redirect('/preTest')
 
-    student = Student(name="anonym") #create anonym student
+    label = Label()
+    label.label = randint(1, 8)
+    student = Student(name="anonym", label=label) #create anonym student
     student.save()
     request.session['session_id'] = "23434"
     request.session['student_id'] = student.id
@@ -68,15 +71,17 @@ def PostTestView(request):
     if request.method == 'POST':
         return redirect('/')
     template_name='test.html'
-    form_class = TestForm()
-    return render(request, template_name, {'form': form_class})
+    test = Test.objects.get(pk=2)
+    form_class = TestForm(test=test)
+    return render(request, template_name, {'test_title': "Post Test", 'form': form_class})
 
 def PreTestView(request):
     if request.method == 'POST':
         return redirect('/treatment/' + str(request.session['treatment_id']) + '/lesson/1')
     template_name='test.html'
-    form_class = TestForm()
-    return render(request, template_name, {'form': form_class})
+    test = Test.objects.get(pk=1)
+    form_class = TestForm(test=test)
+    return render(request, template_name, {'test_title': "Pre Test", 'form': form_class})
 
 def getLesson(treatment, lesson_order):
     if lesson_order == 1:

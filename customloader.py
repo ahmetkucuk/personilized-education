@@ -65,8 +65,6 @@ class Customloader():
                 treatmentStudent = TreatmentStudent(treatment=currentTreatment, student=currentStudent, pre_test_score=preScore, post_test_score=randint(preScore, 3))
                 treatmentStudent.save()
 
-
-
 if __name__ == "__main__":
     print("Run directly")
 else:
